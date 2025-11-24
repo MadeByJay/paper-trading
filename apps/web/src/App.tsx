@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
+import { InstrumentsPage } from './pages/InstrumentsPage';
 import { useGetHelloMessageQuery } from './store/apiSlice';
 
 const DashboardPage: React.FC = () => {
@@ -31,10 +32,14 @@ const App: React.FC = () => {
         <Link to="/" className="font-semibold">
           Dashboard
         </Link>
+        <Link to="/instruments" className="font-semibold">
+          Instruments
+        </Link>
       </nav>
 
       <Routes>
         <Route path="/" element={<DashboardPage />} />
+        <Route path="/instruments" element={<InstrumentsPage />} />
       </Routes>
     </div>
   );
