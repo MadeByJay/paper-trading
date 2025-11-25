@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { prismaClient } from './prismaClient';
+import { authRouter } from './routes/authRoutes';
 import { instrumentsRouter } from './routes/instruments';
 
 const app = express();
@@ -16,6 +17,8 @@ app.use((request: Request, response: Response, next: NextFunction) => {
   console.log(`${request.method} ${request.path}`);
   next();
 });
+
+app.use('/api/auth', authRouter);
 app.use('/api/instruments', instrumentsRouter);
 
 app.get('/health', async (request: Request, response: Response) => {
