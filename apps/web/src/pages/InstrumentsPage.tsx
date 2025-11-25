@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { useGetInstrumentsQuery, type Instrument } from '../store/apiSlice';
 
-export const InstrumentsPage: React.FC = () => {
+export const InstrumentsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { data, isLoading, isError, refetch } = useGetInstrumentsQuery(
     searchTerm ? { search: searchTerm, limit: 50 } : undefined,
@@ -43,7 +43,9 @@ export const InstrumentsPage: React.FC = () => {
               <tr key={instrument.id}>
                 <td className="px-2 py-1 border">{instrument.symbol}</td>
                 <td className="px-2 py-1 border">{instrument.name}</td>
-                <td className="px-2 py-1 border">{instrument.instrumentType}</td>
+                <td className="px-2 py-1 border">
+                  {instrument.instrumentType}
+                </td>
                 <td className="px-2 py-1 border">{instrument.currency}</td>
               </tr>
             ))}
