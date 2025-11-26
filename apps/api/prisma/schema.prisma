@@ -15,7 +15,8 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  accounts Account[]
+  accounts   Account[]
+  watchlists Watchlist[]
 }
 
 model Account {
@@ -39,11 +40,36 @@ enum InstrumentType {
 }
 
 model Instrument {
-  id             String         @id @default(uuid())
-  symbol         String         @unique
-  name           String
-  instrumentType InstrumentType
-  currency       String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id                   String                @id @default(uuid())
+  symbol               String                @unique
+  name                 String
+  instrumentType       InstrumentType
+  currency             String
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  watchlistInstruments WatchlistInstrument[]
+}
+
+model Watchlist {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User                  @relation(fields: [userId], references: [id])
+  items WatchlistInstrument[]
+}
+
+model WatchlistInstrument {
+  id             String   @id @default(uuid())
+  watchlistId    String
+  instrumentId   String
+  positionInList Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  watchlist  Watchlist  @relation(fields: [watchlistId], references: [id])
+  instrument Instrument @relation(fields: [instrumentId], references: [id])
+
+  @@unique([watchlistId, instrumentId])
 }

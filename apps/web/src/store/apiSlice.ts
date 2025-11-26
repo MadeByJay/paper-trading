@@ -27,6 +27,27 @@ export type MeResponse = {
   defaultAccountId: string | null;
 };
 
+export type WatchlistSummary = {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type WatchlistItem = {
+  id: string;
+  positionInList: number;
+  instrument: Instrument;
+};
+
+export type WatchlistDetails = {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  items: WatchlistItem[];
+};
+
 const defaultLimit = 50;
 
 export const apiSlice = createApi({
@@ -44,6 +65,7 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
+  tagTypes: ['Watchlists', 'Watchlist'],
   endpoints: (build) => ({
     getHelloMessage: build.query<{ message: string }, void>({
       query: () => '/hello',
@@ -94,13 +116,62 @@ export const apiSlice = createApi({
     getCurrentUser: build.query<MeResponse, void>({
       query: () => '/auth/me',
     }),
+
+    getWatchlists: build.query<{ watchlists: WatchlistSummary[] }, void>({
+      query: () => '/watchlists',
+      providesTags: ['Watchlists'],
+    }),
+
+    getWatchlistById: build.query<{ watchlist: WatchlistDetails }, string>({
+      query: (watchlistId) => `/watchlists/${watchlistId}`,
+      providesTags: (result, error, watchlistId) => [
+        { type: 'Watchlist', id: watchlistId },
+      ],
+    }),
+
+    createWatchlist: build.mutation<
+      { watchlist: WatchlistSummary },
+      { name: string }
+    >({
+      query: (requestBody) => ({
+        url: '/watchlists',
+        method: 'POST',
+        body: requestBody,
+      }),
+      invalidatesTags: ['Watchlists'],
+    }),
+
+    addInstrumentToWatchlist: build.mutation({
+      query: ({ watchlistId, instrumentId }) => ({
+        url: `/watchlists/${watchlistId}/instruments`,
+        method: 'POST',
+        body: { instrumentId },
+      }),
+    }),
+
+    removeInstrumentFromWatchlist: build.mutation<
+      void,
+      { watchlistId: string; instrumentId: string }
+    >({
+      query: ({ watchlistId, instrumentId }) => ({
+        url: `/watchlists/${watchlistId}/instruments/${instrumentId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, argumentsObject) => [
+        { type: 'Watchlist', id: argumentsObject.watchlistId },
+      ],
+    }),
   }),
 });
-
 export const {
   useGetHelloMessageQuery,
   useGetInstrumentsQuery,
   useRegisterUserMutation,
   useLoginUserMutation,
   useGetCurrentUserQuery,
+  useGetWatchlistsQuery,
+  useGetWatchlistByIdQuery,
+  useCreateWatchlistMutation,
+  useAddInstrumentToWatchlistMutation,
+  useRemoveInstrumentFromWatchlistMutation,
 } = apiSlice;

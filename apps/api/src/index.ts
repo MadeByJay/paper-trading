@@ -4,6 +4,8 @@ import cors from 'cors';
 import { prismaClient } from './prismaClient';
 import { authRouter } from './routes/authRoutes';
 import { instrumentsRouter } from './routes/instruments';
+import { authenticateRequest } from './middleware/middleware';
+import { watchlistRouter } from './routes/watchlistRoutes';
 
 const app = express();
 const serverPort = process.env.API_PORT ? Number(process.env.API_PORT) : 4000;
@@ -20,6 +22,7 @@ app.use((request: Request, response: Response, next: NextFunction) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/instruments', instrumentsRouter);
+app.use('/api/watchlists', authenticateRequest, watchlistRouter);
 
 app.get('/health', async (request: Request, response: Response) => {
   try {
@@ -28,6 +31,10 @@ app.get('/health', async (request: Request, response: Response) => {
   } catch (error) {
     response.status(500).json({ status: 'error', database: 'down' });
   }
+});
+
+app.get('/api/hello', (request: Request, response: Response) => {
+  response.json({ message: 'Trading Platform API is running' });
 });
 
 app.listen(serverPort, () => {

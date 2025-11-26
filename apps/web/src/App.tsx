@@ -6,6 +6,7 @@ import { clearCredentials } from './store/authSlice';
 import { InstrumentsPage } from './pages/InstrumentsPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { WatchlistPage } from './pages/WatchlistPage';
 
 const DashboardPage = () => {
   const { data, isLoading, isError } = useGetHelloMessageQuery();
@@ -62,6 +63,9 @@ export const App = () => {
           <Link to="/instruments" className="font-semibold">
             Instruments
           </Link>
+          <Link to="/watchlists" className="font-semibold">
+            Watchlists
+          </Link>
         </div>
 
         <div className="flex items-center gap-3">
@@ -104,6 +108,14 @@ export const App = () => {
           element={
             <RequireAuth>
               <InstrumentsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/watchlists"
+          element={
+            <RequireAuth>
+              <WatchlistPage />
             </RequireAuth>
           }
         />
